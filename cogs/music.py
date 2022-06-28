@@ -1,4 +1,4 @@
-import discord,secrets, asyncio, youtube_dl, utility, time
+import discord, asyncio, youtube_dl, utility, time
 from discord.ext import commands
 from discord.ui import Button, View
 from random import seed, randint
@@ -68,10 +68,12 @@ class Music(commands.Cog):
 
     @commands.command()
     async def skip(self, ctx):
+        if self.loop:
+            self.loop = not self.loop
         if self.reachedEnd:
             await self.sendEndOfQueue(ctx)           
             return
-        ctx.voice_client.stop()
+        ctx.voice_client.stop()      
 
     @commands.command()
     async def seek(self, ctx, timestamp : str):
