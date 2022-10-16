@@ -28,7 +28,8 @@ class Valorant(commands.Cog):
         self.agentImageUrl = 'https://media.valorant-api.com/agents/'
         self.compTiers = {0:'Unranked',3:'Iron I',4:'Iron II',5:'Iron III',6:'Bronze I',7:'Bronze II',8:'Bronze III',
         9:'Silver I',10:'Silver II',11:'Silver III',12:'Gold I',13:'Gold II',14:'Gold III',15:'Platinum I',16:'Platinum II',
-        17:'Platinum III',18:'Diamond I',19:'Diamond II',20:'Diamond III',21:'Immortal I',22:'Immortal II', 23:'Immortal III', 24:'Radiant'}
+        17:'Platinum III',18:'Diamond I',19:'Diamond II',20:'Diamond III',21:'Ascendant I',22:'Ascendant II', 23:'Ascendant III', 24:'Immortal I', 25:'Immortal II',
+        26:'Immortal III',27:'Radiant'}
         self.initialiseContent()
         self.initialiseMaps()
         with open('localValorantContent/maps.json', 'r', encoding='utf-8') as f:
@@ -105,7 +106,7 @@ class Valorant(commands.Cog):
         utility.commit()
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name='valorantmatches',description='Unlink your valorant account from discord.')
+    @app_commands.command(name='valorantmatches',description='View your recent valorant matches.')
     #@app_commands.guilds(discord.Object(817238795966611466))
     async def valorantmatches(self, interaction:discord.Interaction)->None:
         id = interaction.user.id
@@ -173,7 +174,7 @@ class Valorant(commands.Cog):
         if ctx.author.id != secrets.keironID:
             return
         try:
-            content = self.watcher.content.contents('NA','en-GB')
+            content = self.watcher.content.contents('EU','en-US')
         except:
             await ctx.send("Content server offline, try later bro")
             return
@@ -737,6 +738,7 @@ class Valorant(commands.Cog):
     def getPlayerAbilityUsageFromMatch(self, match,puuid):
         playerData = self.getPlayerDataFromMatch(match,puuid)
         abilityCasts = playerData['stats']['abilityCasts']
+
         for x in self.content['characters']:
             if x['id'].upper() == playerData['characterId'].upper():
                 ability1Name = x['abilities'][0]['displayName'].title()
@@ -744,6 +746,8 @@ class Valorant(commands.Cog):
                 grenadeName = x['abilities'][2]['displayName'].title()
                 ultName = x['abilities'][3]['displayName'].title()
                 break
+        if abilityCasts is None:
+            return {ability1Name:0, ability2Name:0, grenadeName:0, ultName:0}
         return {ability1Name:abilityCasts['ability1Casts'], ability2Name:abilityCasts['ability2Casts'],
                 grenadeName:abilityCasts['grenadeCasts'], ultName:abilityCasts['ultimateCasts']}
                 
@@ -837,9 +841,9 @@ class Valorant(commands.Cog):
             self.loadAbilities()
             self.saveJson('localValorantContent/content.json', self.content)
 
-    def saveJson(self, path, json):
+    def saveJson(self, path, json_dict):
         with open(path, 'w', encoding='utf-8') as f:
-            f.write(json.dumps(json))
+            f.write(json.dumps(json_dict))
 
     def loadAbilities(self):
         url = 'https://valorant-api.com/v1/agents/'

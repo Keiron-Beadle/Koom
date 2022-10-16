@@ -1,12 +1,23 @@
 from datetime import datetime
+import requests, io
 import discord, secrets
 from discord.ext import commands
-from discord import app_commands
+from discord import TextChannel, app_commands
 
 class Base(commands.Cog):
     def __init__(self,bot:commands.Bot)->None:
         self.bot = bot
     
+    @commands.command()
+    async def becky_sleep(self, ctx):
+        author = ctx.author.id
+        if author != secrets.keironID:
+            return
+        becky = self.bot.get_user(secrets.beckyID)
+        guild : discord.Guild = ctx.guild
+        becky_member = guild.get_member(becky.id)
+        await becky_member.move_to(None)
+
     @commands.command()
     async def load(self,ctx, cog):
         if ctx.author.id != secrets.keironID:
@@ -32,16 +43,44 @@ class Base(commands.Cog):
         await ctx.send(f"Unloaded {cog}")
 
     @commands.command()
+    async def decode(self,ctx, num : int):
+        await ctx.message.delete()
+        message_ref = ctx.message.reference
+        if message_ref is None:
+            await ctx.send("You didn't reply to a message.")
+            return
+        message = await ctx.channel.fetch_message(message_ref.message_id)
+        if len(message.attachments) == 0:
+            await ctx.send("The message you replied to didn't have any files.")
+            return
+        attachment = message.attachments[0]
+        if attachment.content_type != 'image/jpeg' and attachment.content_type != 'image/png':
+            await ctx.send("The attachment in the replied message was not a .jpg or .png")
+            return
+        url = attachment.url
+        img_data = requests.get(url).content
+        byte_data = bytearray(img_data)
+        for index,values in enumerate(img_data):
+            byte_data[index] = values ^ int(num)
+        io_data = io.BytesIO(byte_data)
+        await ctx.author.send(file=discord.File(fp=io_data, filename='temp.png'))
+
+    @commands.command()
     async def begin(self, ctx):
+        reject = ['mudae-spam','bot-spam', 'bot-games','mudae', 'mudae-anarchy','drinking-games','bot-help','art','art-resources','weekly-riddles-and-puzzles','weekly-talk','blakebongo-bot']
         guild : discord.Guild = ctx.guild
-        channel = await guild.fetch_channel(623264928937279499)
-        counter = 0
-        async for message in channel.history(limit=None):
-            #if message.author.id == 496369962311614464:
-            counter +=1
-            with open('raw.txt','a', encoding='utf-8') as f:
-                f.write(message.content + "\n")
-        print(f"Messages Scraped: {counter}")
+        channels = await guild.fetch_channels()
+        with open('raw.txt','a', encoding='utf-8') as f:
+            for channel in channels:
+                if not isinstance(channel,TextChannel) or channel.name in reject: continue
+                counter = 0
+                async for message in channel.history(limit=None):
+                    if message.author.bot or len(message.content) < 8 or message.content.startswith('http'):
+                        continue
+                    #if message.author.display_name == 'Nissa':
+                    #    counter +=1
+                    f.write(message.content.removesuffix('\n') + "\n")
+                print(f"Messages Scraped: {counter}, From: {channel.name}")
 
     @app_commands.command(name='patchnote',description="Sends a patch note to the specified channel")
     @app_commands.guilds(discord.Object(817238795966611466))

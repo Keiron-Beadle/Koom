@@ -33,9 +33,9 @@ class Gacha(commands.Cog):
         self.activeTrades = []
         self.activeSells = []
         self.random = Random()
-        self.spawnChannel = self.bot.get_partial_messageable(id=secrets.gachaSpawnChannel,type=discord.ChannelType.text)
-        self.spawn_task = asyncio.get_event_loop().create_task(self.spawnSkins())
-        self.shop_task = asyncio.get_event_loop().create_task(self.resetShop())
+        #self.spawnChannel = self.bot.get_partial_messageable(id=secrets.gachaSpawnChannel,type=discord.ChannelType.text)
+        #self.spawn_task = asyncio.get_event_loop().create_task(self.spawnSkins())
+        #self.shop_task = asyncio.get_event_loop().create_task(self.resetShop())
         self.lastClaimer = None
         self.lastClaimTime = 0
 

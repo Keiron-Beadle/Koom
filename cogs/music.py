@@ -28,6 +28,21 @@ class Music(commands.Cog):
     async def on_voice_state_update(self,member,before,after):
         if self.bot.application_id == member.id and after.channel == None:
             self.cleanup()
+            return
+        
+        elif before.channel is None:
+            voice = after.channel.guild.voice_client
+            time = 0
+            while True:
+                await asyncio.sleep(1)
+                time = time + 1
+                if voice.is_playing() and not voice.is_paused():
+                    time = 0
+                if time == 10:
+                    await voice.disconnect()
+                if not voice.is_connected():
+                    self.cleanup()
+                    break
 
     def cleanup(self):
         self.ignorePostSongEvent = True
@@ -172,7 +187,8 @@ class Music(commands.Cog):
                         stream.read()
                         totalTime += 0.02
             ctx.voice_client.play(stream, after=lambda e: asyncio.run_coroutine_threadsafe(self.post_song(ctx), self.bot.loop))
-            await self.sendPlayingMessage(ctx)
+            if not self.loop:
+                await self.sendPlayingMessage(ctx)
         except Exception as e:
             print(e)            
 
