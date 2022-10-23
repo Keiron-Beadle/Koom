@@ -25,6 +25,7 @@ class Economy(commands.Cog):
     @app_commands.command(name="baltop", description="Print up to the top 100 balances")
     #@app_commands.guilds(discord.Object(817238795966611466))
     async def baltop(self, interaction:discord.Interaction)->None:
+        await interaction.response.defer(thinking=True)
         view = View(timeout=120.0)
         utility.execute('SELECT * FROM Economy ORDER BY bank DESC')
         self.topBalances = utility.cursor.fetchall()
@@ -35,7 +36,7 @@ class Economy(commands.Cog):
         if len(self.topBalances) <= 10:
             rightBtn.disabled = True
         view.add_item(leftBtn).add_item(rightBtn)
-        await interaction.response.send_message(embed=embed,view=view)
+        await interaction.followup.send(embed=embed,view=view)
         
     @app_commands.command(name="daily",description="Get your daily reward!")
     #@app_commands.guilds(discord.Object(817238795966611466))

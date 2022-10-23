@@ -177,7 +177,7 @@ def generateBalanceEmbed(name, balanceEntry):
     return embed
 
 async def generateBalTopEmbed(eco, author, start, end):
-    embed = discord.Embed(title="<:StonksCypher:932829442299031582> Top Balances", color=0xede732)
+    embed = discord.Embed(title="<:CypherStonks:932829442299031582> /vTop Balances", color=0xede732)
     embed.set_footer(text=f"Requested by {author.display_name}")
     balNames = '\u200b'
     balAmounts = '\u200b'
