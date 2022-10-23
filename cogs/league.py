@@ -1,5 +1,5 @@
 from random import randrange
-import discord,secrets, utility, time, mysql.connector
+import discord,secrets, utility, time, mysql.connector, os
 from league_view import LeagueMatchView
 from typing import List
 from utility import *
@@ -21,7 +21,7 @@ RANKED_MULTIPIER = 1.5
 class League(commands.Cog):
     def __init__(self,bot:commands.Bot)->None:
         self.bot = bot
-        self.watcher : LolWatcher = LolWatcher(secrets.leagueKey)
+        self.watcher : LolWatcher = LolWatcher(os.getenv('leagueKey'))
         versions = self.watcher.data_dragon.versions_for_region('euw')
         self.baseRankUrl = "https://thebestcomputerscientist.co.uk/leagueranks/Emblem_"
         self.champList = self.watcher.data_dragon.champions(versions['n']['champion'])

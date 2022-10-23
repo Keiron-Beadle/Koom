@@ -22,4 +22,4 @@ class KoomBot(commands.Bot):
         #print(synced)
 
 bot = KoomBot()
-bot.run(secrets.discordToken)
+bot.run(os.getenv('discordToken'))

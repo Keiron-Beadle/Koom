@@ -258,7 +258,7 @@ class Casino(commands.Cog):
         filepath = f"{datetime.datetime.now().strftime('%H-%M-%S')}{game_data['discord_id']}.png"
         backImage.save(filepath)
         file = discord.File(filepath, filename='board.png')
-        vKChannel = self.bot.get_channel(secrets.valImageChannel)
+        vKChannel = self.bot.get_channel(os.getenv('valImageChannel'))
         img_msg = await vKChannel.send(file=file)
         embed.set_image(url=img_msg.attachments[0].url)
         os.remove(filepath)

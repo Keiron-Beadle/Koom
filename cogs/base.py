@@ -1,6 +1,6 @@
 from datetime import datetime
 import requests, io
-import discord, secrets
+import discord, secrets, os
 from discord.ext import commands
 from discord import TextChannel, app_commands
 
@@ -11,30 +11,30 @@ class Base(commands.Cog):
     @commands.command()
     async def becky_sleep(self, ctx):
         author = ctx.author.id
-        if author != secrets.keironID:
+        if author != os.getenv('keironID'):
             return
-        becky = self.bot.get_user(secrets.beckyID)
+        becky = self.bot.get_user(os.getenv('beckyID'))
         guild : discord.Guild = ctx.guild
         becky_member = guild.get_member(becky.id)
         await becky_member.move_to(None)
 
     @commands.command()
     async def load(self,ctx, cog):
-        if ctx.author.id != secrets.keironID:
+        if ctx.author.id != os.getenv('keironID'):
             return
         await self.bot.load_extension(f'cogs.{cog}')
         await ctx.send(f"Loaded {cog}")
 
     @commands.command()
     async def sendvideo(self, ctx,filename:str):
-        if ctx.author.id != secrets.keironID:
+        if ctx.author.id != os.getenv('keironID'):
             return
         file = discord.File(fp=filename)
         await ctx.send(file=file)
 
     @commands.command()
     async def unload(self, ctx, cog):
-        if ctx.author.id != secrets.keironID:
+        if ctx.author.id != os.getenv('keironID'):
             return
         if cog == 'base':
             await ctx.send("Can't unload the base cog")
@@ -86,7 +86,7 @@ class Base(commands.Cog):
     @app_commands.guilds(discord.Object(817238795966611466))
     async def patchnote(self, interaction:discord.Interaction, channelid:str, title:str, content:str)->None:
         channelid = int(channelid)
-        if interaction.user.id != secrets.keironID:
+        if interaction.user.id != os.getenv('keironID'):
             return
         embed = discord.Embed(title=f'{title}',timestamp=datetime.now(), color=0x1076eb)
         content = content.replace('\\n', '\n')

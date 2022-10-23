@@ -21,8 +21,8 @@ COMP_MULTIPLIER = 1.5
 class Valorant(commands.Cog):
     def __init__(self,bot:commands.Bot)->None:
         self.bot = bot 
-        self.riotwatcher = RiotWatcher(secrets.valKey)
-        self.watcher = ValWatcher(secrets.valKey)
+        self.riotwatcher = RiotWatcher(os.getenv('valKey'))
+        self.watcher = ValWatcher(os.getenv('valKey'))
         self.activeMatches = []
         self.playerCardUrl = 'https://media.valorant-api.com/playercards/'
         self.agentImageUrl = 'https://media.valorant-api.com/agents/'
@@ -171,7 +171,7 @@ class Valorant(commands.Cog):
 
     @commands.command(name='pullcontent')
     async def pullcontent(self, ctx):
-        if ctx.author.id != secrets.keironID:
+        if ctx.author.id != os.getenv('keironID'):
             return
         try:
             content = self.watcher.content.contents('EU','en-US')
@@ -425,7 +425,7 @@ class Valorant(commands.Cog):
         embed.add_field(name='Time', value=f'```yaml\n{timeSinceRoundStart}\n```')
         img_filePath = self.generateKillEventImage(match, event, puuid)
         file = discord.File(img_filePath, filename='minimap.png')
-        vKChannel = self.bot.get_channel(secrets.valImageChannel)
+        vKChannel = self.bot.get_channel(os.getenv('valImageChannel'))
         img_msg = await vKChannel.send(file=file)
         embed.set_image(url=img_msg.attachments[0].url)
         os.remove(img_filePath)
@@ -439,7 +439,7 @@ class Valorant(commands.Cog):
         embed.add_field(name='Planted At:',value=f'```yaml\n{timeSinceRoundStart}\n```', inline=False)
         img_filePath = self.generateBombImage(match, event, puuid)
         file = discord.File(img_filePath, filename='minimap.png')
-        vKChannel = self.bot.get_channel(secrets.valImageChannel)
+        vKChannel = self.bot.get_channel(os.getenv('valImageChannel'))
         img_msg = await vKChannel.send(file=file)
         embed.set_image(url=img_msg.attachments[0].url)
         os.remove(img_filePath)
@@ -453,7 +453,7 @@ class Valorant(commands.Cog):
         embed.add_field(name='Defused At:',value=f'```yaml\n{timeSinceRoundStart}\n```', inline=False)
         img_filePath = self.generateBombImage(match, event, puuid)
         file = discord.File(img_filePath, filename='minimap.png')
-        vKChannel = self.bot.get_channel(secrets.valImageChannel)
+        vKChannel = self.bot.get_channel(os.getenv('valImageChannel'))
         img_msg = await vKChannel.send(file=file)
         embed.set_image(url=img_msg.attachments[0].url)
         os.remove(img_filePath)
@@ -560,7 +560,7 @@ class Valorant(commands.Cog):
         embed.add_field(name="Ability Usage <:4275valorantpheonixmyeyes:963428401597800479>",value=abilityCodeBlock,inline=False)
         matchImageFile = self.makeMatchImage(match_data, team, party, puuid)
         file = discord.File(matchImageFile, filename='image.png')
-        vKChannel = self.bot.get_channel(secrets.valImageChannel)
+        vKChannel = self.bot.get_channel(os.getenv('valImageChannel'))
         img_msg = await vKChannel.send(file=file)
         img_url = img_msg.attachments[0].url
         embed.set_image(url=img_url)

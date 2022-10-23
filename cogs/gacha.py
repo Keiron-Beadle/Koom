@@ -1,5 +1,5 @@
 from datetime import datetime
-import difflib
+import difflib, os
 import discord,secrets, time, asyncio, utility, re
 from mysql.connector.cursor import MySQLCursor
 from random import Random
@@ -33,7 +33,7 @@ class Gacha(commands.Cog):
         self.activeTrades = []
         self.activeSells = []
         self.random = Random()
-        #self.spawnChannel = self.bot.get_partial_messageable(id=secrets.gachaSpawnChannel,type=discord.ChannelType.text)
+        #self.spawnChannel = self.bot.get_partial_messageable(id=os.getenv('gachaSpawnChannel'),type=discord.ChannelType.text)
         #self.spawn_task = asyncio.get_event_loop().create_task(self.spawnSkins())
         #self.shop_task = asyncio.get_event_loop().create_task(self.resetShop())
         self.lastClaimer = None
@@ -41,7 +41,7 @@ class Gacha(commands.Cog):
 
     @commands.command()
     async def doit(self, ctx):
-        if ctx.user.id != secrets.KeironID:
+        if ctx.user.id != os.getenv('keironID'):
             return
         
     # @app_commands.command(name='copy',description="Copy a skin for £ equal to it's rarity")
@@ -61,7 +61,7 @@ class Gacha(commands.Cog):
             return
         name = closest_skin.replace('_', ' ').removesuffix('.jpg')
         embed = discord.Embed(title=f'{name}', color=0xf0e80a)
-        embed.set_image(url=f'{secrets.skinBaseURL}{closest_skin}')
+        embed.set_image(url=f'{os.getenv("skinBaseURL")}{closest_skin}')
         await interaction.response.send_message(embed=embed)
 
     async def resetShop(self):
@@ -143,7 +143,7 @@ class Gacha(commands.Cog):
             skin = view.skinList[int(label)-1]
             embed = discord.Embed(title=f'Buy {skin}', color=0x55ff00)
             skinImage = self.convertSkinToUrl(skin)
-            embed.set_image(url=f'{secrets.skinBaseURL}{skinImage}')
+            embed.set_image(url=f'{os.getenv("skinBaseURL")}{skinImage}')
             tier = self.getTierOfSkin(skin)
             embed.add_field(name='Cost',value=f'```yaml\n£{SHOP_PRICES[tier-1]}\n```')
             await interaction.response.edit_message(embed=embed,view=view)
@@ -193,7 +193,7 @@ class Gacha(commands.Cog):
             embed = discord.Embed(title='Success', color=0x00ff15)
             embed.add_field(name=f'Bought {skin} for £{price}', value='\u200b')
             skinImage = self.convertSkinToUrl(skin)
-            embed.set_image(url=f'{secrets.skinBaseURL}{skinImage}')
+            embed.set_image(url=f'{os.getenv("skinBaseURL")}{skinImage}')
             await interaction.response.edit_message(embed=embed,view=view)
 
     def refillShop(self):
@@ -311,7 +311,7 @@ class Gacha(commands.Cog):
         value = TIER_SELL_PRICE[self.getTierOfSkin(closest_skin)-1]
         embed.add_field(name='Price', value=f'```diff\n+£{value}\n```')
         image_url = self.convertSkinToUrl(closest_skin)
-        embed.set_image(url=f'{secrets.skinBaseURL}{image_url}')
+        embed.set_image(url=f'{os.getenv("skinBaseURL")}{image_url}')
         await interaction.response.send_message(embed=embed,view=view)
     
     async def sellSkinViewCallback(self,interaction, discord_id,label):
@@ -336,7 +336,7 @@ class Gacha(commands.Cog):
             embed = discord.Embed(title='Successfully Sold', color=0x20e842)
             embed.add_field(name='Turnover', value=f'```diff\n+£{value}\n```')
             image_url = self.convertSkinToUrl(x[2])
-            embed.set_image(url=f'{secrets.skinBaseURL}{image_url}')
+            embed.set_image(url=f'{os.getenv("skinBaseURL")}{image_url}')
             await interaction.response.edit_message(embed=embed)
         else:
             embed = discord.Embed(title='Cancelled', color=0xe82a20)
@@ -571,7 +571,7 @@ class Gacha(commands.Cog):
         utility.commit()
         embed = discord.Embed(title=f'Favourited {closest_skin}',color=0x3091f2)
         skinurl = self.convertSkinToUrl(closest_skin)
-        embed.set_image(url=f'{secrets.skinBaseURL}{skinurl}')
+        embed.set_image(url=f'{os.getenv("skinBaseURL")}{skinurl}')
         await interaction.response.send_message(embed=embed)
         
     @app_commands.command(name='wl',description='Display your wishlisted skin.')
@@ -587,7 +587,7 @@ class Gacha(commands.Cog):
         url = self.convertSkinToUrl(userdata[2])
         embed = discord.Embed(title=f"{userdata[2]}", color=0xdb256e)
         embed.set_author(name=f'{interaction.user.display_name}', icon_url=f'{interaction.user.display_avatar.url}')
-        embed.set_image(url=f'{secrets.skinBaseURL}{url}')
+        embed.set_image(url=f'{os.getenv("skinBaseURL")}{url}')
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name='wishlistdel',description='Remove your wishlisted skin.')
@@ -726,7 +726,7 @@ class Gacha(commands.Cog):
         skins = data['claimed'].split(',')
         if favourite == '.jpg':
             favourite = 'lol.png'
-        favourite = f"{secrets.squareBaseUrl}{favourite}"
+        favourite = f"{os.getenv('squareBaseUrl')}{favourite}"
         body = '```md\n'
         for i in range(data['start'],data['stop']):
             if i >= len(skins):
@@ -805,7 +805,7 @@ class Gacha(commands.Cog):
             color =0xf00e3b
         else:
             color=0xff00c3
-        url = f'{secrets.skinBaseURL}{skin}'
+        url = f'{os.getenv("skinBaseURL")}{skin}'
         embed = discord.Embed(title=title, color=color, description="Claim using 'bruh claim \_\_\_\_\_\_'")
         embed.set_image(url=url)
         hidden_skin = self.convertUrlToHidden(skin)

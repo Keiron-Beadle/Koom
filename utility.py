@@ -1,11 +1,11 @@
-import discord, mysql.connector, asyncio, secrets
+import discord, mysql.connector, asyncio, secrets, os
 from mysql.connector.connection import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
 from discord.ext import commands
 from discord.ui import Button
 
 league_content_url = 'https://thebestcomputerscientist.co.uk/league_content/'
-cnn : MySQLConnection = mysql.connector.connect(host=secrets.database_url, database='u687243686_koom_data', user='u687243686_koom', password=secrets.database_password)
+cnn : MySQLConnection = mysql.connector.connect(host=os.getenv('database_url'), database='u687243686_koom_data', user='u687243686_koom', password=os.getenv('database_password'))
 cursor : MySQLCursor = cnn.cursor(buffered=True)
 
 def execute(operation, params=None):

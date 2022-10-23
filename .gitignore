@@ -17,3 +17,12 @@ __pycache__/secrets.cpython-310.pyc
 cogs/__pycache__/dnd.cpython-310.pyc
 __pycache__/dnd_view.cpython-310.pyc
 __pycache__/secrets.cpython-310.pyc
+py.env
+.vscode/launch.json
+cogs/__pycache__/base.cpython-310.pyc
+cogs/__pycache__/casino.cpython-310.pyc
+cogs/__pycache__/gacha.cpython-310.pyc
+cogs/__pycache__/league.cpython-310.pyc
+cogs/__pycache__/valorant.cpython-310.pyc
+__pycache__/utility.cpython-310.pyc
+__pycache__/secrets.cpython-310.pyc
