@@ -30,7 +30,7 @@ class Music(commands.Cog):
             self.cleanup()
             return
         
-        elif before.channel is None:
+        elif self.bot.application_id == member.id and before.channel is None:
             voice = after.channel.guild.voice_client
             time = 0
             while True:
