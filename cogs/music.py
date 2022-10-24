@@ -1,4 +1,4 @@
-import discord, asyncio, youtube_dl, utility, time
+import discord, asyncio, youtube_dl, utility, time, ctypes, ctypes.util
 from discord.ext import commands
 from discord.ui import Button, View
 from random import seed, randint
@@ -11,6 +11,9 @@ class Music(commands.Cog):
         self.bot = bot
         self.initialiseVariables()
         self.economy = bot.get_cog("Economy")
+        find_opus = ctypes.util.find_library('opus')
+        discord.opus.load_opus(find_opus)
+
 
     def initialiseVariables(self):
         self.queuePointer = 0
